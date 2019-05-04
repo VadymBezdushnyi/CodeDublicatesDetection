@@ -105,18 +105,18 @@ def tr(x):
 if __name__ == '__main__':
     # print(timeit.timeit(work, number=1))
 
-    s1 = open("test_example1.py").read()
-    s2 = open("test_example2.py").read()
+    s1 = open("tests/file1.py").read()
+    s2 = open("tests/file2.py").read()
 
     tokens1 = get_tokens(s1)
     tokens2 = get_tokens(s2)
 
 
-    print("Difflib similarity:    ", difflib.SequenceMatcher(None, s1, s2).ratio())
-    print("Token similarity:      ", FileSimilarity(tokens1, tokens2).get_similarity())
+    print("Difflib similarity:      ", difflib.SequenceMatcher(None, s1, s2).ratio())
+    print("Token similarity:        ", FileSimilarity(tokens1, tokens2).get_similarity())
 
-    print("Tree similarity:       ", get_diff(s1, s2))
+    print("Tree similarity:         ", get_diff(s1, s2))
 
     emb1 = generete_embeddings(s1)
     emb2 = generete_embeddings(s2)
-    print("Embeddings similarity: ", tr(1 - spatial.distance.cosine(emb1, emb2)))
+    print("*** Node2Vec similarity: ", tr(1 - spatial.distance.cosine(emb1, emb2)))
