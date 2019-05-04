@@ -1,4 +1,13 @@
-def mult(a, b):
-    return a * b
+import textdistance
+import difflib
 
-print("The sum of %i and %i is %i" % (5, 3, sum(5, 3)))
+class FileSimilarity:
+    def __init__(self, file1, file2):
+        self._file1 = file1
+        self._file2 = file2
+
+    def get_similarity(self):
+        sim =  textdistance.jaccard.normalized_similarity(self._file1, self._file2,)
+        return sim
+
+

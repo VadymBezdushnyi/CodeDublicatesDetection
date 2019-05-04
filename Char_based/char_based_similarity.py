@@ -7,8 +7,7 @@ class FileSimilarity:
         self._file2 = file2
 
     def get_similarity(self):
-        lev = textdistance.levenshtein.normalized_similarity(self._file1, self._file2)
-        seq_match = difflib.SequenceMatcher(None, self._file1, self._file2).ratio()
-        return lev, seq_match
+        sim =  textdistance.Jaccard(qval = 5).normalized_similarity(self._file1, self._file2)
+        return sim
 
 

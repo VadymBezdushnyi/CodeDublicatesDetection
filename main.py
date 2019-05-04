@@ -1,6 +1,7 @@
 import sys
 from Char_based.char_based_similarity import *
-
+import ml
+from scipy import spatial
 from antlr4 import *
 from antlr4.InputStream import InputStream
 from antlr4.error.ErrorListener import ErrorListener
@@ -22,7 +23,7 @@ def printAst(parser, node, indent: int = 0):
     print(" " * indent, end="")
 
     if isinstance(node, TerminalNodeImpl):
-        print(node.getSymbol())
+        print(node.getSymbol().type)
     else:
         print(parser.ruleNames[node.getRuleIndex()])
 
@@ -83,49 +84,28 @@ def get_tokens(char_stream:str):
     return [i.text for i in all_tokens]
 
 
+def generete_embeddings(code):
+    # printAst(*parse(code))
+    parser_res = parse(code)
+    emb = ml.run(parser_res)
+    return emb
+
+
 
 if __name__ == '__main__':
-    s1 = open("test_example1.py").read()
-    # get_tokens(s1)
 
+    s1 = open("test_example1.py").read()
     s2 = open("test_example2.py").read()
 
     tokens1 = get_tokens(s1)
     tokens2 = get_tokens(s2)
 
-    fs_char = FileSimilarity(s1, s2)
     fs_token = FileSimilarity(tokens1, tokens2)
+    print("Difflib similarity: ", difflib.SequenceMatcher(None, s1, s2).ratio())
+    print("Token similarity: ", fs_token.get_similarity())
 
-    print(fs_char.get_similarity())
-    print(fs_token.get_similarity())
+    emb1 = generete_embeddings(s1)
+    emb2 = generete_embeddings(s2)
 
-    # tree = parser.expr().toStringTree()
-    # print(tree)
-    # printAst(parser, parser.file_input())
-
-
-
-    # lexer = Python3Lexer(None)
-    # parser.buildParseTrees = False
-    # parser.memory = {}  # how to add this to generated constructor?
-    #
-    # line = sys.stdin.readline()
-    # lineno = 1
-    #
-    # while line != '':
-    #     line = line.strip()
-    #     #print(lineno, line)
-    #
-    #     istream = InputStream(line + "\n")
-    #     lexer = ExprLexer(istream)
-    #     lexer.line = lineno
-    #     lexer.column = 0
-    #     token_stream = CommonTokenStream(lexer)
-    #     parser.setInputStream(token_stream)
-    #     parser.stat()
-    #
-    #     line = sys.stdin.readline()
-    #     lineno += 1
-    code = open('tests/test.py').read()
-    printAst(*parse(code))
+    print("Root embeddings similarity: ", 1 - spatial.distance.cosine(emb1, emb2))
 
