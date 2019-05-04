@@ -1,1 +1,6 @@
 venv/
+build
+*~
+*.pyc
+.idea
+__pycache__
