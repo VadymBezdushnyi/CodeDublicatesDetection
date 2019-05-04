@@ -40,7 +40,7 @@ def AST2Graph(parser_result):
 # Generate walks
 def run(parser_result):
     graph, labels = AST2Graph(parser_result)
-    node2vec = Node2Vec(graph, dimensions=10, walk_length=10, num_walks=9, workers=3)
+    node2vec = Node2Vec(graph, dimensions=10, walk_length=10, num_walks=9, workers=3, quiet=True)
 
     # reformatted_walks = [(labels[int(x)] for x in walk)for walk in node2vec.walks]
 

@@ -13,13 +13,13 @@ from antlr4.tree.Tree import TerminalNodeImpl
 def get_diff(code1, code2):
     parser, root = parse(code1)
     parser1, root1 = parse(code2)
-    return tree_diff(parser, parser1, root, root1) / (get_size(root) + get_size(root1))
+    return 1 - tree_diff(parser, parser1, root, root1) / (get_size(root) + get_size(root1))
 
 
 def work():
     code = open('tests/f3.cpp').read()
     code1 = open('tests/f4.cpp').read()
-    print(get_diff(code, code1))
+    return 1 - get_diff(code, code1)
 
 
 
@@ -95,6 +95,12 @@ def generete_embeddings(code):
     return emb
 
 
+def tr(x):
+    # adjust cosine
+    if x < 0.7:
+        return (x/0.7)**5
+    else:
+        return x
 
 if __name__ == '__main__':
     # print(timeit.timeit(work, number=1))
@@ -105,11 +111,12 @@ if __name__ == '__main__':
     tokens1 = get_tokens(s1)
     tokens2 = get_tokens(s2)
 
-    fs_token = FileSimilarity(tokens1, tokens2)
-    print("Difflib similarity: ", difflib.SequenceMatcher(None, s1, s2).ratio())
-    print("Token similarity: ", fs_token.get_similarity())
+
+    print("Difflib similarity:    ", difflib.SequenceMatcher(None, s1, s2).ratio())
+    print("Token similarity:      ", FileSimilarity(tokens1, tokens2).get_similarity())
+
+    print("Tree similarity:       ", get_diff(s1, s2))
 
     emb1 = generete_embeddings(s1)
     emb2 = generete_embeddings(s2)
-
-    print("Root embeddings similarity: ", 1 - spatial.distance.cosine(emb1, emb2))
+    print("Embeddings similarity: ", tr(1 - spatial.distance.cosine(emb1, emb2)))
